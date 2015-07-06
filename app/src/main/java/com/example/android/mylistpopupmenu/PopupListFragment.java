@@ -1,26 +1,34 @@
 package com.example.android.mylistpopupmenu;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.app.ListFragment;
+import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 
-import com.example.android.mylistpopupmenu.dummy.DummyContent;
+public class PopupListFragment extends ListFragment implements View.OnClickListener
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
- * interface.
- */
-class PopupListFragment extends ListFragment
 {
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id)
+    {
+        super.onListItemClick(l, v, position, id);
+        String item = (String) l.getItemAtPosition(position);
+        Toast.makeText(getActivity(), "Item Clicked: " + item, Toast.LENGTH_SHORT).show();
+    }
+/* private OnFragmentInteractionListener mListener; */
 
-    private OnFragmentInteractionListener mListener;
+    @Override
+    public void onClick(View v)
+    {
+        Toast.makeText(getActivity(), "Clicked: ", Toast.LENGTH_SHORT).show();
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -31,65 +39,52 @@ class PopupListFragment extends ListFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
+    public void onActivityCreated(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+        super.onActivityCreated(savedInstanceState);
+        ArrayList<String> items = new ArrayList<String>();
+        for (int i = 0, z = Cheeses.CHEESES.length; i < z; i++)
+        {
+            items.add(Cheeses.CHEESES[i]);
+        }
 
-
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        // Set the ListAdapter
+        setListAdapter(new PopupAdapter(items));
     }
 
-
     @Override
-    public void onAttach(Activity activity)
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        super.onAttach(activity);
-        try
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    class PopupAdapter extends ArrayAdapter<String>
+    {
+
+        PopupAdapter(ArrayList<String> items)
         {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e)
+            super(getActivity(), R.layout.list_item, android.R.id.text1, items);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup container)
         {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+            // Let ArrayAdapter inflate the layout and set the text
+            View view = super.getView(position, convertView, container);
+
+            // BEGIN_INCLUDE(button_popup)
+            // Retrieve the popup button from the inflated view
+            View popupButton = view.findViewById(R.id.button_popup);
+
+            // Set the item as the button's tag so it can be retrieved Flater
+            popupButton.setTag(getItem(position));
+
+            // Set the fragment instance as the OnClickListener
+            popupButton.setOnClickListener(PopupListFragment.this);
+            // END_INCLUDE(button_popup)
+
+            // Finally return the view to be displayed
+            return view;
         }
     }
-
-    @Override
-    public void onDetach()
-    {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id)
-    {
-        super.onListItemClick(l, v, position, id);
-
-        if (null != mListener)
-        {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener
-    {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
-    }
-
 }

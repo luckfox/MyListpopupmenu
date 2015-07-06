@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">listpopupmenu</string>
+    <string name="title_activity_main">MainActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="menu_remove">Remove</string>
+    <string name="content_open_popup">Open Popup Menu</string>
+</resources>
