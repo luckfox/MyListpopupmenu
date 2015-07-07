@@ -2,7 +2,9 @@ package com.example.android.mylistpopupmenu;
 
 import android.app.ListFragment;
 import android.os.Bundle;
+import android.support.v7.widget.PopupMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -28,7 +30,34 @@ public class PopupListFragment extends ListFragment implements View.OnClickListe
     public void onClick(View v)
     {
         Toast.makeText(getActivity(), "Clicked: ", Toast.LENGTH_SHORT).show();
+        showPopupMenu(v);
     }
+
+    private void showPopupMenu(View v)
+    {
+        final PopupAdapter adapter = (PopupAdapter) getListAdapter();
+        final String item = (String) v.getTag();
+        PopupMenu popup = new PopupMenu(getActivity(), v);
+        popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+        {
+            public boolean onMenuItemClick(MenuItem menuitem)
+            {
+                switch (menuitem.getItemId())
+                {
+                    case R.id.menu_remove:
+                        // Remove the item from the adapter
+                        ((PopupAdapter) getListAdapter()).remove(item);
+                        return true;
+                    case R.id.menu_add:
+                        return true;
+                }
+                return false;
+            }
+        });
+        popup.show();
+    }
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -36,6 +65,7 @@ public class PopupListFragment extends ListFragment implements View.OnClickListe
      */
     public PopupListFragment()
     {
+
     }
 
     @Override
@@ -58,12 +88,20 @@ public class PopupListFragment extends ListFragment implements View.OnClickListe
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
+
+
     class PopupAdapter extends ArrayAdapter<String>
     {
 
         PopupAdapter(ArrayList<String> items)
         {
             super(getActivity(), R.layout.list_item, android.R.id.text1, items);
+        }
+
+        @Override
+        public void remove(String object)
+        {
+            super.remove(object);
         }
 
         @Override
